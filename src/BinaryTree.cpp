@@ -1,10 +1,13 @@
 #include "BinaryTree.h"
 
+
 // Constructors
+template <typename ItemType>
 BinaryTree<ItemType>::BinaryTree(){}
 
-BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem), rootItem(rootItem) {
-    rootPtr = new BinaryNode(rootItem);
+template <typename ItemType>
+BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem) {
+    rootPtr = new BinaryNode<ItemType>(rootItem);
 }
 
 // BinaryTree(const ItemType& rootItem,
@@ -15,17 +18,20 @@ BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem), rootItem(rootItem) {
 
 
 // Members
+template <typename ItemType>
 bool isEmpty(){
-    if (rootItem == nullptr){
+    if (rootPtr == nullptr){
         return true;
     }
     return false;
 }
 
+template <typename ItemType>
 int getHeight(){
     return getHeightHelper(rootPtr);
 }
 
+template <typename ItemType>
 int getHeightHelper(BinaryNode<ItemType>* subTreePtr) {
     if (!subTreePtr.isEmpty()){
         return 0;
