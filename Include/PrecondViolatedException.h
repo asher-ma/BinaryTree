@@ -11,4 +11,6 @@ class PrecondViolatedExcep: public logic_error {
         PrecondViolatedExcep(const string& message = "");
     }; // end PrecondViolatedExcep
 
+#include "../src/PrecondViolatedException.cpp"
+
 #endif

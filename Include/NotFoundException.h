@@ -11,4 +11,6 @@ class NotFoundExcep : public runtime_error {
         NotFoundExcep(const string& message = "");
 }; // end NotFoundExcep
 
+#include "../src/NotFoundException.cpp"
+
 #endif
