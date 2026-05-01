@@ -81,8 +81,6 @@ void BinaryTree<ItemType>::setRootData( const ItemType& newData) {
     }
 }
 
-// Pure virtual method placeholders (to avoid compilation errors):
-
 template <typename ItemType>
 bool BinaryTree<ItemType>::add( const ItemType& newData) {
     if (this->isEmpty()) {   // Case for if tree is empty
@@ -116,6 +114,8 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::balancedAdd(BinaryNode<ItemType>* su
     }
 }
 
+// Pure virtual method placeholders (to avoid compilation errors):
+
 template <typename ItemType>
 bool BinaryTree<ItemType>::remove( const ItemType& data) {
     return false;
@@ -123,6 +123,11 @@ bool BinaryTree<ItemType>::remove( const ItemType& data) {
 
 template <typename ItemType>
 void BinaryTree<ItemType>::clear() {}
+
+// Preorder traversal through tree until target is found
+// template <typename ItemType>
+// BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target, bool& success) const ;
+
 
 // ERR: This is getEntry() for a BST not a general binary tree
 //      The general binary tree getEntry() must check every node
@@ -161,13 +166,35 @@ bool BinaryTree<ItemType>::contains( const ItemType& anEntry) const {
     }
     return false;
 }
-
 // Traversals
+// preorder: root, left, right
 template <typename ItemType>
-void BinaryTree<ItemType>::preorderTraverse( void visit(ItemType&)) const {}
+void BinaryTree<ItemType>::preorderTraverse( void visit(ItemType&)) const {
+    preorder(visit, this->rootPtr);
+}
 
+template<typename ItemType>
+void BinaryTree<ItemType>::preorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
+    if (treePtr != nullptr) {
+        ItemType item = treePtr->getItem();
+        visit(item);
+        preorder(visit, treePtr->getLeftChildPtr());
+        preorder(visit, treePtr->getRightChildPtr());
+    }
+}
+
+
+// inorder: left, root, right
 template <typename ItemType>
 void BinaryTree<ItemType>::inorderTraverse( void visit(ItemType&)) const {}
 
+// template<typename ItemType>
+// void BinaryTree<ItemType>::inorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const ;
+
+
+// postorder: left, right, root
 template <typename ItemType>
 void BinaryTree<ItemType>::postorderTraverse( void visit(ItemType&)) const {}
+
+// template<typename ItemType>
+// void BinaryTree<ItemType>::postorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const ;
