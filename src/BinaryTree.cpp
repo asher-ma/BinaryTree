@@ -114,8 +114,6 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::balancedAdd(BinaryNode<ItemType>* su
     }
 }
 
-// Pure virtual method placeholders (to avoid compilation errors):
-
 template <typename ItemType>
 bool BinaryTree<ItemType>::remove( const ItemType& data) {
     return false;
@@ -124,9 +122,23 @@ bool BinaryTree<ItemType>::remove( const ItemType& data) {
 template <typename ItemType>
 void BinaryTree<ItemType>::clear() {}
 
-// Preorder traversal through tree until target is found
-// template <typename ItemType>
-// BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target, bool& success) const ;
+// Traverse down through tree until target is found // Page 527 <---!!!
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr,
+        const ItemType& target, bool& success) const {
+    if (treePtr->getItem() == target) {
+        success = true;
+        return treePtr;
+    }
+    if (treePtr->getLeftChildPtr() != nullptr) {
+        return findNode(treePtr->getLeftChildPtr(), target, success);
+    }
+    if (treePtr->getRightChildPtr() != nullptr) {
+        return findNode(treePtr->getRightChildPtr(), target, success);
+    }
+    success = false;
+    return nullptr;
+}
 
 
 // ERR: This is getEntry() for a BST not a general binary tree
