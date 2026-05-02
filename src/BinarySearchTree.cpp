@@ -89,22 +89,6 @@ BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeLeftmostNode(BinaryNode<
 
 }
 
-/*
-//Removes the leftmost node in the left subtree of the node pointed to by nodePtr.
-// Sets inorderSuccessor to the value in this node.
-// Returns a pointer to the revised subtree.
-removeLeftmostNode(nodePtr: BinaryNodePointer,
- inorderSuccesssor: ItemType&): BinaryNodePointer {
-    if (nodePtr->getLeftChildPtr() == nullptr) {
-        // This is the node you want; it has no left child, but it might have a right subtree
-        inorderSuccesssor = nodePtr->getItem()
-        return removeNode(nodePtr)
-    } else {
-        return removeLeftmostNode(nodePtr->getLeftChildPtr(), inorderSuccesssor)
-    }
-}
-*/
-
 template <typename ItemType>
 BinaryNode<ItemType>* BinarySearchTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {}
 
@@ -115,7 +99,11 @@ template <typename ItemType>
 bool BinarySearchTree<ItemType>::add( const ItemType& newEntry) {}
 
 template <typename ItemType>
-bool BinarySearchTree<ItemType>::remove( const ItemType& anEntry) {}
+bool BinarySearchTree<ItemType>::remove( const ItemType& anEntry) {
+    bool success = false;
+    this->rootPtr = removeValue(this->rootPtr, anEntry, success);
+    return success;
+}
 
 template <typename ItemType>
 void BinarySearchTree<ItemType>::setRootData( const ItemType& newData) const {}
