@@ -11,11 +11,35 @@ BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem) {
     this->rootPtr = new BinaryNode<ItemType>(rootItem);
 }
 
-// BinaryTree(const ItemType& rootItem,
-//         const BinaryTree<ItemType>* leftTreePtr,
-//         const BinaryTree<ItemType>* rightTreePtr);
+// Combining subtrees
+template <typename ItemType>
+BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem,
+        const BinaryTree<ItemType>* leftTreePtr, const BinaryTree<ItemType>* rightTreePtr) {
+    this->rootPtr = new BinaryNode<ItemType>(rootItem, copyTree(leftTreePtr), copyTree(rightTreePtr));
+}
 
-// BinaryTree(const BinaryNodeTree<ItemType>& tree);
+// Copy constructor
+template <typename ItemType>
+BinaryTree<ItemType>::BinaryTree(const BinaryTree<ItemType>& tree) {
+    this->rootPtr = copyTree(tree.rootPtr);
+}
+
+// Helper to copy tree
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::copyTree(const BinaryNode<ItemType>* treePtr) const {
+    BinaryNode<ItemType>* newTreePtr = nullptr;
+
+    if (treePtr != nullptr) {
+        // Copy node
+        newTreePtr = new BinaryNode<ItemType>(treePtr->getItem(), nullptr, nullptr);
+        
+        // Recursively copy branches
+        newTreePtr->setLeftChildPtr(copyTree(treePtr->getLeftChildPtr()));
+        newTreePtr->setRightChildPtr(copyTree(treePtr->getRightChildPtr()));
+    }
+
+    return newTreePtr;
+}
 
 // Destructor
 template <typename ItemType>
