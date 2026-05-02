@@ -120,7 +120,8 @@ bool BinaryTree<ItemType>::remove( const ItemType& data) {
 template <typename ItemType>
 void BinaryTree<ItemType>::clear() {}
 
-// Traverse down through tree until target is found
+// Traverse down each branch until target is found
+// If every node has been checked then return nullptr
 template <typename ItemType>
 BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {
     if (treePtr == nullptr) {
@@ -145,43 +146,28 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treeP
 }
 
 
-// ERR: This is getEntry() for a BST not a general binary tree
-//      The general binary tree getEntry() must check every node
 // Finds and returns searched value if found in tree
 template <typename ItemType>
 ItemType BinaryTree<ItemType>::getEntry( const ItemType& anEntry) const {
-    BinaryNode<ItemType>* current = this->rootPtr;
+    BinaryNode<ItemType>* node = findNode(this->rootPtr, anEntry);
 
-    while (current != nullptr) {
-        if (anEntry == current->getItem()) {
-            return current->getItem();
-        } else if (anEntry < current->getItem()){
-            current = current->getLeftChildPtr();
-        } else {
-            current = current->getRightChildPtr();
-        }
+    if (node != nullptr) {
+        return node->getItem();
+    } else {
+        throw NotFoundExcep("Entry not found in tree");
     }
-    throw NotFoundExcep("Entry not found in tree");
 }
 
-// ERR: This is contains() for a BST not a general binary tree
-//      The general binary tree contains() must check every node
 // Returns true if tree contains searched entry, otherwise false
 template <typename ItemType>
 bool BinaryTree<ItemType>::contains( const ItemType& anEntry) const {
-    BinaryNode<ItemType>* current = this->rootPtr;
-
-    while (current != nullptr) {
-        if (anEntry == current->getItem()) {
-            return true;
-        } else if (anEntry < current->getItem()){
-            current = current->getLeftChildPtr();
-        } else {
-            current = current->getRightChildPtr();
-        }
+    if (findNode(this->rootPtr, anEntry) != nullptr) {
+        return true;
+    } else {
+        return false;
     }
-    return false;
 }
+
 // Traversals
 // preorder: root, left, right
 template <typename ItemType>
