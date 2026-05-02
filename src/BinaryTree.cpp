@@ -4,7 +4,9 @@
 
 // Constructors
 template <typename ItemType>
-BinaryTree<ItemType>::BinaryTree(){}
+BinaryTree<ItemType>::BinaryTree() {
+    this->rootPtr = nullptr;
+}
 
 template <typename ItemType>
 BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem) {
@@ -15,7 +17,7 @@ BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem) {
 template <typename ItemType>
 BinaryTree<ItemType>::BinaryTree(const ItemType& rootItem,
         const BinaryTree<ItemType>* leftTreePtr, const BinaryTree<ItemType>* rightTreePtr) {
-    this->rootPtr = new BinaryNode<ItemType>(rootItem, copyTree(leftTreePtr), copyTree(rightTreePtr));
+    this->rootPtr = new BinaryNode<ItemType>(rootItem, copyTree(leftTreePtr->rootPtr), copyTree(rightTreePtr->rootPtr));
 }
 
 // Copy constructor
@@ -145,21 +147,33 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::moveValuesUpTree(BinaryNode<ItemType
 // Traverse down each branch until target is found
 // If every node has been checked then return nullptr
 template <typename ItemType>
-BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target, bool& success) const {
+BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr,
+        const ItemType& target, bool& success) const {
     if (treePtr == nullptr) {
         success = false;
         return nullptr;
     }
     if (treePtr->getItem() == target) {
-        return treePtr;
         success = true;
+        return treePtr;
     }
-    
+
+    // Recurse down left branch of subtree
     BinaryNode<ItemType>* node = findNode(treePtr->getLeftChildPtr(), target, success);
     if (node != nullptr) {
+        success = true;
         return node;
     }
-    return findNode(treePtr->getRightChildPtr(), target, success);
+
+    // Recurse down right branch of subtree
+    node = findNode(treePtr->getRightChildPtr(), target, success);
+    if (node != nullptr) {
+        success = true;
+        return node;
+    }
+
+    success = false;
+    return nullptr;
 }
 
 // Copies tree by recursively copying its subtrees
