@@ -90,7 +90,19 @@ BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeLeftmostNode(BinaryNode<
 }
 
 template <typename ItemType>
-BinaryNode<ItemType>* BinarySearchTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {}
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {
+    if (treePtr == nullptr) {
+        return nullptr; // Not found
+    } else if (treePtr->getItem() == target) {
+        return treePtr; // Found
+    } else if (treePtr->getItem() > target) {
+        // Search left subtree
+        return findNode(treePtr->getLeftChildPtr(), target)
+    } else {
+        // Search right subtree
+        return findNode(subTreePtr->getRightChildPtr(), target);
+    }
+}
 
 
 // Public member functions
@@ -108,7 +120,9 @@ bool BinarySearchTree<ItemType>::remove( const ItemType& anEntry) {
 template <typename ItemType>
 void BinarySearchTree<ItemType>::setRootData( const ItemType& newData) const {}
 
-// Reimplemented to use new findNode()
+
+// Reimplemented to use BST findNode()
+
 template <typename ItemType>
 bool BinarySearchTree<ItemType>::contains(const ItemType& anEntry) const {
     return findNode(this->rootPtr, anEntry) != nullptr;
