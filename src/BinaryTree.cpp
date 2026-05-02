@@ -24,6 +24,13 @@ BinaryTree<ItemType>::BinaryTree(const BinaryTree<ItemType>& tree) {
     this->rootPtr = copyTree(tree.rootPtr);
 }
 
+// Destructor
+template <typename ItemType>
+BinaryTree<ItemType>::~BinaryTree() {}
+
+
+// Protected memeber functions
+
 // Helper to copy tree
 template <typename ItemType>
 BinaryNode<ItemType>* BinaryTree<ItemType>::copyTree(const BinaryNode<ItemType>* treePtr) const {
@@ -41,11 +48,61 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::copyTree(const BinaryNode<ItemType>*
     return newTreePtr;
 }
 
-// Destructor
+// TODO
 template <typename ItemType>
-BinaryTree<ItemType>::~BinaryTree() {}
+BinaryNode<ItemType>* BinaryTree<ItemType>::removeValue(BinaryNode<ItemType>* subTreePtr,
+        const ItemType target, bool& success) {
+    // if (treePtr == nullptr) {
+    //     success = true;
+    //     return nullptr;
+    // }
+    // if (treePtr->getItem() == target) {
+    //     return treePtr;
+    //     success = true;
+    // }
+    // if (treePtr->getLeftChildPtr() != nullptr) {
+    //     BinaryNode<ItemType>* node = findNode(treePtr->getLeftChildPtr(), target);
+    //     if (node != nullptr) {
+    //         success = true;
+    //         return node;
+    //     }
+    // }
+    // if (treePtr->getRightChildPtr() != nullptr) {
+    //     BinaryNode<ItemType>* node = findNode(treePtr->getRightChildPtr(), target);
+    //     if (node != nullptr) {
+    //         success = true;
+    //         return node;
+    //     }
+    // }
+    // success = false;
+    // return nullptr;
+}
 
-// Members
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::moveValuesUpTree(BinaryNode<ItemType>* subTreePtr) {
+    if (subTreePtr->isLeaf()) {
+        delete subTreePtr;
+        return nullptr;
+    }
+
+    BinaryNode<ItemType>* leftChildPtr = subTreePtr->getLeftChildPtr();
+    BinaryNode<ItemType>* rightChildPtr = subTreePtr->getRightChildPtr();
+
+    // Traverse down the longer path (or right if equal)
+    if (getHeightHelper(leftChildPtr) <= getHeightHelper(rightChildPtr)) {
+        subTreePtr->setItem(rightChildPtr->getItem());
+        subTreePtr->setRightChildPtr(moveValuesUpTree(rightChildPtr));
+    } else {
+        subTreePtr->setItem(leftChildPtr->getItem());
+        subTreePtr->setLeftChildPtr(moveValuesUpTree(leftChildPtr));
+    }
+
+    return subTreePtr;
+}
+
+
+// Public member functions
+
 // Returns true if tree is empty
 template <typename ItemType>
 bool BinaryTree<ItemType>::isEmpty() const {
@@ -101,8 +158,7 @@ void BinaryTree<ItemType>::setRootData( const ItemType& newData) {
     this->rootPtr->setItem(newData);
 }
 
-// Pure virtual method placeholders (to avoid compilation errors):
-// TODO: Implement these
+// Adds node to tree with given data
 template <typename ItemType>
 bool BinaryTree<ItemType>::add( const ItemType& newData) {
     if (this->isEmpty()) {   // Case for if tree is empty
@@ -136,36 +192,43 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::balancedAdd(BinaryNode<ItemType>* su
     }
 }
 
+// TODO
 template <typename ItemType>
 bool BinaryTree<ItemType>::remove( const ItemType& data) {
     return false;
 }
 
+//TODO
 template <typename ItemType>
 void BinaryTree<ItemType>::clear() {}
 
 // Traverse down each branch until target is found
 // If every node has been checked then return nullptr
 template <typename ItemType>
-BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {
+BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target, bool& success) const {
     if (treePtr == nullptr) {
+        success = true;
         return nullptr;
     }
     if (treePtr->getItem() == target) {
         return treePtr;
+        success = true;
     }
     if (treePtr->getLeftChildPtr() != nullptr) {
-        BinaryNode<ItemType>* node = findNode(treePtr->getLeftChildPtr(), target);
+        BinaryNode<ItemType>* node = findNode(treePtr->getLeftChildPtr(), target, success);
         if (node != nullptr) {
+            success = true;
             return node;
         }
     }
     if (treePtr->getRightChildPtr() != nullptr) {
-        BinaryNode<ItemType>* node = findNode(treePtr->getRightChildPtr(), target);
+        BinaryNode<ItemType>* node = findNode(treePtr->getRightChildPtr(), target, success);
         if (node != nullptr) {
+            success = true;
             return node;
         }
     }
+    success = false;
     return nullptr;
 }
 
@@ -173,9 +236,10 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treeP
 // Finds and returns searched value if found in tree
 template <typename ItemType>
 ItemType BinaryTree<ItemType>::getEntry( const ItemType& anEntry) const {
-    BinaryNode<ItemType>* node = findNode(this->rootPtr, anEntry);
+    bool success = false;
+    BinaryNode<ItemType>* node = findNode(this->rootPtr, anEntry, success);
 
-    if (node != nullptr) {
+    if (success) {
         return node->getItem();
     } else {
         throw NotFoundExcep("Entry not found in tree");
@@ -185,11 +249,9 @@ ItemType BinaryTree<ItemType>::getEntry( const ItemType& anEntry) const {
 // Returns true if tree contains searched entry, otherwise false
 template <typename ItemType>
 bool BinaryTree<ItemType>::contains( const ItemType& anEntry) const {
-    if (findNode(this->rootPtr, anEntry) != nullptr) {
-        return true;
-    } else {
-        return false;
-    }
+    bool success = false;
+    findNode(this->rootPtr, anEntry, success);
+    return success;
 }
 
 // Traversals

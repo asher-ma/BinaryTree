@@ -17,11 +17,13 @@ class BinaryTree : public BinaryTreeAbstract<ItemType>{
         BinaryNode<ItemType>* balancedAdd(BinaryNode<ItemType>* subTreePtr,
         BinaryNode<ItemType>* newNodePtr);
 
+
         BinaryNode<ItemType>* removeValue(BinaryNode<ItemType>* subTreePtr,
         const ItemType target, bool& success);
         BinaryNode<ItemType>* moveValuesUpTree(BinaryNode<ItemType>* subTreePtr);
 
-        BinaryNode<ItemType>* findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const ;
+        BinaryNode<ItemType>* findNode(BinaryNode<ItemType>* treePtr, const ItemType& target,
+        bool& success) const ;
         BinaryNode<ItemType>* copyTree(const BinaryNode<ItemType>* treePtr) const ;
         
         void preorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const ;
@@ -43,7 +45,7 @@ class BinaryTree : public BinaryTreeAbstract<ItemType>{
         ItemType getRootData() const ;
         void setRootData(const ItemType& newData);
         bool add(const ItemType& newData); // Adds a node
-        bool remove(const ItemType& data); // Removes a node
+        bool remove(const ItemType& data); // Removes node containing given data
         void clear();
 
         ItemType getEntry(const ItemType& anEntry) const;

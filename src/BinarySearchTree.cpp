@@ -36,4 +36,24 @@ bool BinaryTree<ItemType>::contains( const ItemType& anEntry) const {
     }
     return false;
 }
+
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::moveValuesUpTree(BinaryNode<ItemType>* subTreePtr) {
+    if (subTreePtr->isLeaf()){
+        delete subTreePtr;
+        subTreePtr = nullPtr;
+        return subTreePtr;
+    }
+    BinaryNode<ItemType>* leftChildPtr = subTreePtr->getLeftChildPtr();
+    BinaryNode<ItemType>* rightChildPtr = subTreePtr->getRightChildPtr();
+    if (leftChildPtr != nullptr && rightChildPtr == nullptr) { // Subtree only has left child
+        nodeToConnectPtr = leftChildPtr;
+    } else if (leftChildPtr == nullptr && rightChildPtr != nullptr) { // Subtree only has right child
+        nodeToConnectPtr = rightChildPtr;
+    } else {    // Subtree has two children
+        BinaryNode<ItemType>* tempPtr = remove
+    }
+
+}
+
 */
