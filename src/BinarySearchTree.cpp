@@ -8,7 +8,18 @@
 
 // Protected member functions
 template <typename ItemType>
-BinaryNode<ItemType>* BinarySearchTree<ItemType>::insertInorder(BinaryNode<ItemType>* subTreePtr, BinaryNode<ItemType>* newNode) {}
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::insertInorder(BinaryNode<ItemType>* subTreePtr, BinaryNode<ItemType>* newNode) {
+    if (subTreePtr == nullptr) {
+        return newNode;
+    } else if (subTreePtr->getItem() > newNode->getItem()) {
+        tempPtr = insertInOrder(subTreePtr->getLeftChildPtr(), newNodePtr);
+        subTreePtr->setLeftChildPtr(tempPtr);
+    } else {
+        tempPtr = insertInOrder(subTreePtr->getRightChildPtr(), newNodePtr);
+        subTreePtr->setRightChildPtr(tempPtr);
+    }
+    return subTreePtr;
+}
 
 template <typename ItemType>
 BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeValue(BinaryNode<ItemType>* subTreePtr, const ItemType target, bool& success) {}
