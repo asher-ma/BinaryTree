@@ -257,7 +257,11 @@ int BinaryTree<ItemType>::getNumberOfNodes() const {
 // Gets item stored in node
 template <typename ItemType>
 ItemType BinaryTree<ItemType>::getRootData() const {
-    return this->rootPtr->getItem();
+    if (this->rootPtr == nullptr) {
+        throw (PrecondViolatedExcep("Empty root pointer"));
+    } else {
+        return this->rootPtr->getItem();
+    }
 }
 
 // Sets node item to provided data
@@ -284,9 +288,6 @@ template <typename ItemType>
 bool BinaryTree<ItemType>::remove(const ItemType& data) {
     bool success = false;
     this->rootPtr = removeValue(this->rootPtr, data, success);
-    if (!success) {
-        throw NotFoundExcep("Entry not found in tree");
-    }
     return success;
 }
 
