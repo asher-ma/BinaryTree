@@ -26,31 +26,70 @@ BinaryTree<ItemType>::BinaryTree(const BinaryTree<ItemType>& tree) {
 
 // Destructor
 template <typename ItemType>
-BinaryTree<ItemType>::~BinaryTree() {}
+BinaryTree<ItemType>::~BinaryTree() {
+    destroyTree(this->rootPtr);
+}
 
 
 // Protected memeber functions
 
-// Copies tree by recursively copying its subtrees
-// Returns pointer to new copy of tree
+// Finds height by recursing down each branch and returning length of longest path
 template <typename ItemType>
-BinaryNode<ItemType>* BinaryTree<ItemType>::copyTree(const BinaryNode<ItemType>* treePtr) const {
-    BinaryNode<ItemType>* newTreePtr = nullptr;
-
-    if (treePtr != nullptr) {
-        // Copy node
-        newTreePtr = new BinaryNode<ItemType>(treePtr->getItem(), nullptr, nullptr);
-        
-        // Recursively copy branches
-        newTreePtr->setLeftChildPtr(copyTree(treePtr->getLeftChildPtr()));
-        newTreePtr->setRightChildPtr(copyTree(treePtr->getRightChildPtr()));
+int BinaryTree<ItemType>::getHeightHelper(BinaryNode<ItemType>* subTreePtr) const {
+    if (subTreePtr == nullptr){
+        return 0;
+    } else {
+        return max(1+getHeightHelper(subTreePtr->getRightChildPtr()),
+            1+getHeightHelper(subTreePtr->getLeftChildPtr()));
     }
-
-    return newTreePtr;
 }
 
-// Searches tree for a node containing target, removes it by pulling values
-// up from longest path
+// Finds number of nodes by recursing down each branch and summing length of each path
+template <typename ItemType>
+int BinaryTree<ItemType>::getNumberOfNodesHelper(BinaryNode<ItemType>* subTreePtr) const {
+    if (subTreePtr == nullptr){
+        return 0;
+    } else {
+        return 1+getNumberOfNodesHelper(subTreePtr->getRightChildPtr()) +
+            getNumberOfNodesHelper(subTreePtr->getLeftChildPtr());
+    }
+}
+
+// Recursively deletes all nodes in given subtree
+template <typename ItemType>
+void BinaryTree<ItemType>::destroyTree(BinaryNode<ItemType>* subTreePtr) {
+    if (subTreePtr != nullptr) {
+        destroyTree(subTreePtr->getLeftChildPtr());
+        destroyTree(subTreePtr->getRightChildPtr());
+        delete subTreePtr;
+    }
+}
+
+// Recursively inserts newNodePtr into shortest and most left subtree
+// Returns modified subtree pointer
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::balancedAdd(BinaryNode<ItemType>* subTreePtr,
+        BinaryNode<ItemType>* newNodePtr) {
+    BinaryNode<ItemType>* leftChildPtr = subTreePtr->getLeftChildPtr();
+    BinaryNode<ItemType>* rightChildPtr = subTreePtr->getRightChildPtr();
+        
+    if (leftChildPtr == nullptr) { 
+        subTreePtr->setLeftChildPtr(newNodePtr);
+        return subTreePtr;
+    } else if (rightChildPtr == nullptr) {
+        subTreePtr->setRightChildPtr(newNodePtr);
+        return subTreePtr;
+    }
+
+    // If current node has two children traverse down the shorter path
+    if (getHeightHelper(leftChildPtr) <= getHeightHelper(rightChildPtr)) {
+        return balancedAdd(leftChildPtr, newNodePtr);
+    } else {
+        return balancedAdd(rightChildPtr, newNodePtr);
+    }
+}
+
+// Searches tree for a node containing target, removes it by pulling values up from longest path
 // Returns the edited subtree
 // Sets success to true if the target was found and removed, false otherwise
 template <typename ItemType>
@@ -103,6 +142,80 @@ BinaryNode<ItemType>* BinaryTree<ItemType>::moveValuesUpTree(BinaryNode<ItemType
     return subTreePtr;
 }
 
+// Traverse down each branch until target is found
+// If every node has been checked then return nullptr
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target, bool& success) const {
+    if (treePtr == nullptr) {
+        success = false;
+        return nullptr;
+    }
+    if (treePtr->getItem() == target) {
+        return treePtr;
+        success = true;
+    }
+    
+    BinaryNode<ItemType>* node = findNode(treePtr->getLeftChildPtr(), target, success);
+    if (node != nullptr) {
+        return node;
+    }
+    return findNode(treePtr->getRightChildPtr(), target, success);
+}
+
+// Copies tree by recursively copying its subtrees
+// Returns pointer to new copy of tree
+template <typename ItemType>
+BinaryNode<ItemType>* BinaryTree<ItemType>::copyTree(const BinaryNode<ItemType>* treePtr) const {
+    BinaryNode<ItemType>* newTreePtr = nullptr;
+
+    if (treePtr != nullptr) {
+        // Copy node
+        newTreePtr = new BinaryNode<ItemType>(treePtr->getItem(), nullptr, nullptr);
+        
+        // Recursively copy branches
+        newTreePtr->setLeftChildPtr(copyTree(treePtr->getLeftChildPtr()));
+        newTreePtr->setRightChildPtr(copyTree(treePtr->getRightChildPtr()));
+    }
+
+    return newTreePtr;
+}
+
+
+// Traversal helpers
+
+// preorder: root, left, right
+template<typename ItemType>
+void BinaryTree<ItemType>::preorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
+    if (treePtr != nullptr) {
+        ItemType item = treePtr->getItem();
+        visit(item);
+        preorder(visit, treePtr->getLeftChildPtr());
+        preorder(visit, treePtr->getRightChildPtr());
+    }
+}
+
+// inorder: left, root, right
+template<typename ItemType>
+void BinaryTree<ItemType>::inorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
+    if (treePtr != nullptr) {
+        inorder(visit, treePtr->getLeftChildPtr());
+        ItemType item = treePtr->getItem();
+        visit(item);
+        inorder(visit, treePtr->getRightChildPtr());
+    }
+}
+
+// postorder: left, right, root
+template<typename ItemType>
+void BinaryTree<ItemType>::postorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
+    if (treePtr != nullptr) {
+        postorder(visit, treePtr->getLeftChildPtr());
+        postorder(visit, treePtr->getRightChildPtr());
+        ItemType item = treePtr->getItem();
+        visit(item);
+    }
+}
+
 
 // Public member functions
 
@@ -121,32 +234,10 @@ int BinaryTree<ItemType>::getHeight() const {
     return getHeightHelper(this->rootPtr);
 }
 
-// Finds height by recursing down each branch and returning length of longest path
-template <typename ItemType>
-int BinaryTree<ItemType>::getHeightHelper(BinaryNode<ItemType>* subTreePtr) const {
-    if (subTreePtr == nullptr){
-        return 0;
-    } else {
-        return max(1+getHeightHelper(subTreePtr->getRightChildPtr()),
-            1+getHeightHelper(subTreePtr->getLeftChildPtr()));
-    }
-}
-
 // Returns number of nodes in tree
 template <typename ItemType>
 int BinaryTree<ItemType>::getNumberOfNodes() const {
     return getNumberOfNodesHelper(this->rootPtr);
-}
-
-// Finds number of nodes by recursing down each branch and summing length of each path
-template <typename ItemType>
-int BinaryTree<ItemType>::getNumberOfNodesHelper(BinaryNode<ItemType>* subTreePtr) const {
-    if (subTreePtr == nullptr){
-        return 0;
-    } else {
-        return 1+getNumberOfNodesHelper(subTreePtr->getRightChildPtr()) +
-            getNumberOfNodesHelper(subTreePtr->getLeftChildPtr());
-    }
 }
 
 // Gets item stored in node
@@ -173,59 +264,24 @@ bool BinaryTree<ItemType>::add( const ItemType& newData) {
     }
 }
 
-template <typename ItemType>
-BinaryNode<ItemType>* BinaryTree<ItemType>::balancedAdd(BinaryNode<ItemType>* subTreePtr,
-        BinaryNode<ItemType>* newNodePtr) {
-    BinaryNode<ItemType>* leftChildPtr = subTreePtr->getLeftChildPtr();
-    BinaryNode<ItemType>* rightChildPtr = subTreePtr->getRightChildPtr();
-        
-    if (leftChildPtr == nullptr) { 
-        subTreePtr->setLeftChildPtr(newNodePtr);
-        return subTreePtr;
-    } else if (rightChildPtr == nullptr) {
-        subTreePtr->setRightChildPtr(newNodePtr);
-        return subTreePtr;
-    }
-
-    // If current node has two children traverse down the shorter path
-    if (getHeightHelper(leftChildPtr) <= getHeightHelper(rightChildPtr)) {
-        return balancedAdd(leftChildPtr, newNodePtr);
-    } else {
-        return balancedAdd(rightChildPtr, newNodePtr);
-    }
-}
-
+// Removes node containing given data
+// Returns true on success
 template <typename ItemType>
 bool BinaryTree<ItemType>::remove(const ItemType& data) {
     bool success = false;
     this->rootPtr = removeValue(this->rootPtr, data, success);
+    if (!success) {
+        throw NotFoundExcep("Entry not found in tree");
+    }
     return success;
 }
 
-//TODO
+// Deletes all nodes in the tree
 template <typename ItemType>
-void BinaryTree<ItemType>::clear() {}
-
-// Traverse down each branch until target is found
-// If every node has been checked then return nullptr
-template <typename ItemType>
-BinaryNode<ItemType>* BinaryTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target, bool& success) const {
-    if (treePtr == nullptr) {
-        success = false;
-        return nullptr;
-    }
-    if (treePtr->getItem() == target) {
-        return treePtr;
-        success = true;
-    }
-    
-    BinaryNode<ItemType>* node = findNode(treePtr->getLeftChildPtr(), target, success);
-    if (node != nullptr) {
-        return node;
-    }
-    return findNode(treePtr->getRightChildPtr(), target, success);
+void BinaryTree<ItemType>::clear() {
+    destroyTree(this->rootPtr);
+    this->rootPtr = nullptr;
 }
-
 
 // Finds and returns searched value if found in tree
 template <typename ItemType>
@@ -249,22 +305,12 @@ bool BinaryTree<ItemType>::contains( const ItemType& anEntry) const {
 }
 
 // Traversals
+
 // preorder: root, left, right
 template <typename ItemType>
 void BinaryTree<ItemType>::preorderTraverse( void visit(ItemType&)) const {
     preorder(visit, this->rootPtr);
 }
-
-template<typename ItemType>
-void BinaryTree<ItemType>::preorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
-    if (treePtr != nullptr) {
-        ItemType item = treePtr->getItem();
-        visit(item);
-        preorder(visit, treePtr->getLeftChildPtr());
-        preorder(visit, treePtr->getRightChildPtr());
-    }
-}
-
 
 // inorder: left, root, right
 template <typename ItemType>
@@ -272,28 +318,8 @@ void BinaryTree<ItemType>::inorderTraverse( void visit(ItemType&)) const {
     inorder(visit, this->rootPtr);
 }
 
-template<typename ItemType>
-void BinaryTree<ItemType>::inorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
-    if (treePtr != nullptr) {
-        inorder(visit, treePtr->getLeftChildPtr());
-        ItemType item = treePtr->getItem();
-        visit(item);
-        inorder(visit, treePtr->getRightChildPtr());
-    }
-}
-
 // postorder: left, right, root
 template <typename ItemType>
 void BinaryTree<ItemType>::postorderTraverse( void visit(ItemType&)) const {
     postorder(visit, this->rootPtr);
-}
-
-template<typename ItemType>
-void BinaryTree<ItemType>::postorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
-    if (treePtr != nullptr) {
-        postorder(visit, treePtr->getLeftChildPtr());
-        postorder(visit, treePtr->getRightChildPtr());
-        ItemType item = treePtr->getItem();
-        visit(item);
-    }
 }
