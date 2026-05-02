@@ -26,21 +26,12 @@ class BinarySearchTree : public BinaryTree<ItemType> {
         BinarySearchTree(const BinarySearchTree<ItemType>& tree);
         virtual ~BinarySearchTree();
         
-        bool isEmpty() const ;
-        int getHeight() const ;
-        int getNumberOfNodes() const ;
-        ItemType getRootData() const ; // throw (PrecondViolatedExcep);
         void setRootData( const ItemType& newData) const ; // throw (PrecondViolatedExcep);
         bool add( const ItemType& newEntry);
         bool remove( const ItemType& anEntry);
-        void clear();
         ItemType getEntry( const ItemType& anEntry) const ; // throw (NotFoundException);
         bool contains( const ItemType& anEntry) const ;
-        
-        void preorderTraverse(void visit(ItemType&)) const ;
-        void inorderTraverse(void visit(ItemType&)) const ;
-        void postorderTraverse(void visit(ItemType&)) const ;
-        
+                
         BinarySearchTree<ItemType>& operator=(const BinarySearchTree<ItemType>& rightHandSide);
 }; // end BinarySearchTree
 
