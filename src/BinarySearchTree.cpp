@@ -1,3 +1,39 @@
+#include "BinaryTreeAbstract.h"
+#include "BinaryTree.h"
+#include "BinarySearchTree.h"
+#include "NotFoundException.h"
+
+// Constructors
+
+
+// Protected member functions
+template <typename ItemType>
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::insertInorder(BinaryNode<ItemType>* subTreePtr, BinaryNode<ItemType>* newNode) {}
+
+template <typename ItemType>
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeValue(BinaryNode<ItemType>* subTreePtr, const ItemType target, bool& success) {}
+
+template <typename ItemType>
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeNode(BinaryNode<ItemType>* nodePtr) {}
+
+template <typename ItemType>
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeLeftmostNode(BinaryNode<ItemType>* subTreePtr, ItemType& inorderSuccessor) {}
+
+template <typename ItemType>
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {}
+
+
+// Public member functions
+
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::add( const ItemType& newEntry) {}
+
+template <typename ItemType>
+bool BinarySearchTree<ItemType>::remove( const ItemType& anEntry) {}
+
+template <typename ItemType>
+void BinarySearchTree<ItemType>::setRootData( const ItemType& newData) const {}
+
 /*
 // ERR: This is getEntry() for a BST not a general binary tree
 //      The general binary tree getEntry() must check every node
