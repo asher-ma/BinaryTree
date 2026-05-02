@@ -108,7 +108,10 @@ BinaryNode<ItemType>* BinarySearchTree<ItemType>::findNode(BinaryNode<ItemType>*
 // Public member functions
 
 template <typename ItemType>
-bool BinarySearchTree<ItemType>::add( const ItemType& newEntry) {}
+bool BinarySearchTree<ItemType>::add( const ItemType& newEntry) {
+    BinaryNode<ItemType>* newNodePtr = new BinaryNode<ItemType>(newEntry);
+    this->rootPtr = insertInorder(this->rootPtr, newNodePtr);
+}
 
 template <typename ItemType>
 bool BinarySearchTree<ItemType>::remove( const ItemType& anEntry) {
