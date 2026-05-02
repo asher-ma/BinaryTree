@@ -22,7 +22,26 @@ BinaryNode<ItemType>* BinarySearchTree<ItemType>::insertInorder(BinaryNode<ItemT
 }
 
 template <typename ItemType>
-BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeValue(BinaryNode<ItemType>* subTreePtr, const ItemType target, bool& success) {}
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeValue(BinaryNode<ItemType>* subTreePtr, const ItemType target, bool& success) {
+    if (subTreePtr == nullptr) {
+        success = false;
+        return nullptr;
+    } else if (subTreePtr->getItem() == target) {
+        subTreePtr = removeNode(subTreePtr); // Remove the item
+        success = true;
+        return subTreePtr;
+    } else if (subTreePtr->getItem() > target) {
+        // Search the left subtree
+        tempPtr = removeValue(subTreePtr->getLeftChildPtr(), target, success);
+        subTreePtr->setLeftChildPtr(tempPtr);
+        return subTreePtr;
+    } else {
+        // Search the right subtree
+        tempPtr = removeValue(subTreePtr->getRightChildPtr(), target, success);
+        subTreePtr->setRightChildPtr(tempPtr);
+        return subTreePtr;
+    }
+}
 
 template <typename ItemType>
 BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeNode(BinaryNode<ItemType>* nodePtr) {}
