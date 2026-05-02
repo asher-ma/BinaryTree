@@ -44,10 +44,66 @@ BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeValue(BinaryNode<ItemTyp
 }
 
 template <typename ItemType>
-BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeNode(BinaryNode<ItemType>* nodePtr) {}
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeNode(BinaryNode<ItemType>* nodePtr) {
+    BinaryNode<ItemType>* leftChildPtr = nodePtr->getLeftChildPtr();
+    BinaryNode<ItemType>* rightChildPtr = nodePtr->getRightChildPtr();
 
+    if (leftChildPtr == nullptr && rightChildPtr == nullptr) { // node is leaf
+        // Remove leaf from the tree
+        delete nodePtr;
+        nodePtr = nullptr;
+        return nodePtr;
+    } else if ((leftChildPtr == nullptr) != (rightChildPtr == nullptr)) { // node only has one child
+        BinaryNode<ItemType>* nodeToConnectPtr;
+        if (leftChildPtr != nullptr) { // node only has left child
+            nodeToConnectPtr = leftChildPtr;
+        } else { // node only has right child
+            nodeToConnectPtr = rightChildPtr;
+        }
+        delete nodePtr;
+        nodePtr = nullptr;
+        return nodeToConnectPtr;
+    } else { // node has two children
+        // Find the inorder successor of the entry in the left subtree rooted at nodes right child
+        ItemType newNodeValue;
+        BinaryNode<ItemType>* tempPtr;
+        tempPtr = removeLeftmostNode(rightChildPtr, newNodeValue);
+        nodePtr->setRightChildPtr(tempPtr);
+        nodePtr->setItem(newNodeValue); // Put replacement value in node
+        return nodePtr;
+    }
+}
+
+// Removes the leftmost node in the left subtree of the node pointed to by nodePtr.
+// Sets inorderSuccessor to the value in this node.
+// Returns a pointer to the revised subtree.
 template <typename ItemType>
-BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeLeftmostNode(BinaryNode<ItemType>* subTreePtr, ItemType& inorderSuccessor) {}
+BinaryNode<ItemType>* BinarySearchTree<ItemType>::removeLeftmostNode(BinaryNode<ItemType>* subTreePtr, ItemType& inorderSuccessor) {
+    if (nodePtr->getLeftChildPtr() == nullptr) {
+        // Deepest node on right child's left subtree with no left child
+        inorderSuccesssor = nodePtr->getItem()
+        return removeNode(nodePtr)
+    } else {
+        return removeLeftmostNode(nodePtr->getLeftChildPtr(), inorderSuccesssor)
+    }
+
+}
+
+/*
+//Removes the leftmost node in the left subtree of the node pointed to by nodePtr.
+// Sets inorderSuccessor to the value in this node.
+// Returns a pointer to the revised subtree.
+removeLeftmostNode(nodePtr: BinaryNodePointer,
+ inorderSuccesssor: ItemType&): BinaryNodePointer {
+    if (nodePtr->getLeftChildPtr() == nullptr) {
+        // This is the node you want; it has no left child, but it might have a right subtree
+        inorderSuccesssor = nodePtr->getItem()
+        return removeNode(nodePtr)
+    } else {
+        return removeLeftmostNode(nodePtr->getLeftChildPtr(), inorderSuccesssor)
+    }
+}
+*/
 
 template <typename ItemType>
 BinaryNode<ItemType>* BinarySearchTree<ItemType>::findNode(BinaryNode<ItemType>* treePtr, const ItemType& target) const {}
